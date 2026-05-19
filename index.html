@@ -3,7 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <title>DevSecOops - FridhemFighters</title>
+
   <style>
+    #warningScreen {
+      position: fixed;
+      inset: 0;
+      background: black;
+      color: red;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Comic Sans MS", cursive;
+    }
+
+    .warningBox {
+      background: yellow;
+      color: black;
+      border: 12px dashed red;
+      padding: 35px;
+      max-width: 750px;
+      text-align: center;
+      box-shadow: 20px 20px 0 red;
+    }
+
+    .warningBox h1 {
+      font-size: 55px;
+      background: black;
+      color: red;
+      border: 5px solid white;
+      padding: 10px;
+    }
+
+    .warningBox p {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .warningBox button {
+      display: block;
+      width: 90%;
+      margin: 15px auto;
+      padding: 18px;
+      font-size: 22px;
+      font-weight: bold;
+      border: 5px solid black;
+      cursor: pointer;
+      background: red;
+      color: white;
+    }
+
     body {
       margin: 0;
       font-family: "Comic Sans MS", cursive;
@@ -25,6 +74,36 @@
       0% { filter: hue-rotate(0deg); }
       50% { filter: hue-rotate(180deg); }
       100% { filter: hue-rotate(360deg); }
+    }
+
+    body.safeMode {
+      background: #111 !important;
+      color: white !important;
+      animation: none !important;
+      filter: none !important;
+    }
+
+    body.safeMode * {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    body.safeMode marquee,
+    body.safeMode .floating {
+      display: none !important;
+    }
+
+    body.safeMode .box {
+      background: #222;
+      border: 5px solid white;
+      box-shadow: none;
+    }
+
+    body.safeMode h1 {
+      background: #333;
+      color: white;
+      border: 5px solid white;
+      text-shadow: none;
     }
 
     h1 {
@@ -106,6 +185,7 @@
     #output {
       margin-top: 25px;
       background: white;
+      color: black;
       border: 10px double black;
       padding: 25px;
       font-size: 23px;
@@ -145,7 +225,23 @@
     }
   </style>
 </head>
+
 <body>
+
+  <div id="warningScreen">
+    <div class="warningBox">
+      <h1>⚠️ WARNING ⚠️</h1>
+
+      <p>This site contains flashing colors and motion effects.</p>
+
+      <p>It may trigger seizures for people with photosensitive epilepsy.</p>
+
+      <p>Enter at your own risk.</p>
+
+      <button onclick="enterChaos()">ENTER CHAOS MODE</button>
+      <button onclick="enterSafeMode()">SAFE MODE - NO FLASHING</button>
+    </div>
+  </div>
 
   <div class="floating" style="left: 5%;">🔥</div>
   <div class="floating" style="left: 20%; animation-delay: 1s;">💀</div>
@@ -188,6 +284,15 @@ $ ./starta_kaos.sh
   </div>
 
   <script>
+    function enterChaos() {
+      document.getElementById("warningScreen").style.display = "none";
+    }
+
+    function enterSafeMode() {
+      document.body.classList.add("safeMode");
+      document.getElementById("warningScreen").style.display = "none";
+    }
+
     const blameList = [
       "Personen som sa: 'jag ska bara testa snabbt'.",
       "Den som körde kommandot utan att läsa det.",
@@ -249,46 +354,9 @@ $ ./starta_kaos.sh
       }
     };
 
-    function beep() {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = "square";
-      osc.frequency.value = 600;
-      gain.gain.value = 0.08;
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
-
-      setTimeout(() => {
-        osc.frequency.value = 900;
-      }, 120);
-
-      setTimeout(() => {
-        osc.stop();
-      }, 300);
-    }
-
-    function speak(text) {
-      if ("speechSynthesis" in window) {
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "sv-SE";
-        msg.rate = 1.1;
-        msg.pitch = 0.7;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(msg);
-      }
-    }
-
     function incident(type) {
       const i = incidents[type];
       const blame = blameList[Math.floor(Math.random() * blameList.length)];
-
-      beep();
-      speak(i.title + ". " + i.panic);
 
       document.getElementById("output").innerHTML = `
         <div class="panic">${i.title}</div>

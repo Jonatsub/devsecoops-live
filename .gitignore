@@ -2,3 +2,4 @@
 # Local backup files
 index-backup.html
 *.bak
+index-*.html
