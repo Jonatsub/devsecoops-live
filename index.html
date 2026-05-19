@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>DevSecOops - Incident Roulette</title>
+  <style>
+    body {
+      background: #00ff00;
+      font-family: Comic Sans MS, Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: 48px;
+      color: red;
+      text-shadow: 3px 3px black;
+    }
+
+    .box {
+      background: yellow;
+      border: 8px dashed red;
+      padding: 25px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 15px 15px black;
+    }
+
+    button {
+      display: block;
+      width: 90%;
+      margin: 12px auto;
+      padding: 15px;
+      font-size: 22px;
+      background: red;
+      color: white;
+      border: 5px solid black;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: black;
+      color: red;
+    }
+
+    #output {
+      margin-top: 25px;
+      background: white;
+      border: 6px solid black;
+      padding: 25px;
+      font-size: 22px;
+      text-align: left;
+      min-height: 220px;
+    }
+
+    .panic {
+      font-size: 34px;
+      color: red;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h1>DevSecOops</h1>
+    <h2>FridhemFighters Incident Roulette</h2>
+    <p>Klicka på en incident och se hur organisationen tappar kontrollen.</p>
+
+    <button onclick="incident('env')">Någon pushade .env till GitHub</button>
+    <button onclick="incident('kubectl')">Någon körde kubectl delete all --all</button>
+    <button onclick="incident('postit')">Adminlösenordet sitter på en post-it</button>
+    <button onclick="incident('logs')">Ingen har aktiverat loggning</button>
+    <button onclick="incident('root')">Containern kör som root</button>
+    <button onclick="incident('latest')">Alla images kör :latest</button>
+    <button onclick="incident('redis')">Redis ligger öppet mot internet</button>
+
+    <div id="output">
+      <div class="panic">Väntar på katastrof...</div>
+    </div>
+  </div>
+
+  <script>
+    const incidents = {
+      env: {
+        title: "🚨 .env pushad till GitHub 🚨",
+        panic: "PANIKNIVÅ: 9000",
+        roast: "Det här är inte open source. Det är open secrets.",
+        action: "Rotera nycklarna direkt, ta bort filen, uppdatera .gitignore och kontrollera git history.",
+        blame: "Personen som sa: 'Jag ska bara pusha snabbt innan lunch.'",
+        lesson: "Kurskoppling: secrets management, Git hygiene och incident response."
+      },
+      kubectl: {
+        title: "💀 kubectl delete all --all 💀",
+        panic: "PANIKNIVÅ: MOLNBASERAD ARBETSLÖSHET",
+        roast: "Grattis. Du har precis uppfunnit Kubernetes speedrun till tomt namespace.",
+        action: "Återställ från manifest eller Terraform, kontrollera namespace och använd RBAC.",
+        blame: "Personen som kör kommandon innan hjärnan har bootat.",
+        lesson: "Kurskoppling: IaC, RBAC, namespace och change control."
+      },
+      postit: {
+        title: "🟨 Adminlösenord på post-it 🟨",
+        panic: "PANIKNIVÅ: KONTORSMATERIAL",
+        roast: "MFA? Nej tack. Vi har gul lapp under tangentbordet.",
+        action: "Byt lösenord, inför lösenordshanterare, MFA och personliga konton.",
+        blame: "Den som tycker att fysisk säkerhet är 'någon annans problem'.",
+        lesson: "Kurskoppling: identity, access management och Zero Trust."
+      },
+      logs: {
+        title: "🕳️ Ingen loggning 🕳️",
+        panic: "PANIKNIVÅ: VI VET INGENTING",
+        roast: "Incidenten gick jättebra. Vi vet bara inte vad som hände, när det hände eller vem som gjorde det.",
+        action: "Aktivera loggning, samla loggar centralt och skapa alerts.",
+        blame: "Personen som sa: 'Vi kollar loggarna sen.'",
+        lesson: "Kurskoppling: monitoring, detection och Wazuh."
+      },
+      root: {
+        title: "👑 Container kör som root 👑",
+        panic: "PANIKNIVÅ: ROOT MED SJÄLVFÖRTROENDE",
+        roast: "Containern kör som root eftersom vi tydligen gillar äventyr.",
+        action: "Kör som non-root, sätt securityContext och minimera privileges.",
+        blame: "Dockerfilen från Stack Overflow 2016.",
+        lesson: "Kurskoppling: container security och least privilege."
+      },
+      latest: {
+        title: "🎲 Image taggad med :latest 🎲",
+        panic: "PANIKNIVÅ: PRODUKTIONSLOTTERI",
+        roast: "Vi vet inte vad som körs, men det känns modernt.",
+        action: "Använd versionspinnade images, SBOM och kontrollerad releaseprocess.",
+        blame: "Personen som gillar överraskningar i produktion.",
+        lesson: "Kurskoppling: supply chain security och reproducible deployments."
+      },
+      redis: {
+        title: "🔥 Redis öppet mot internet 🔥",
+        panic: "PANIKNIVÅ: GRATIS DATA TILL ALLA",
+        roast: "Redis behövde tydligen också ett socialt liv på internet.",
+        action: "Stäng exponeringen, använd nätverkssegmentering, auth och firewall-regler.",
+        blame: "Den som trodde att 'temporärt öppet' betyder säkert.",
+        lesson: "Kurskoppling: segmentering, least exposure och defense in depth."
+      }
+    };
+
+    function incident(type) {
+      const i = incidents[type];
+
+      document.getElementById("output").innerHTML = `
+        <div class="panic">${i.title}</div>
+        <p><strong>${i.panic}</strong></p>
+        <p><strong>Roast:</strong> ${i.roast}</p>
+        <p><strong>Åtgärd:</strong> ${i.action}</p>
+        <p><strong>Vem skyller vi på?</strong> ${i.blame}</p>
+        <p><strong>Lärdom:</strong> ${i.lesson}</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
