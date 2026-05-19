@@ -2,156 +2,317 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>DevSecOops - Incident Roulette</title>
+  <title>DevSecOops - FridhemFighters</title>
   <style>
     body {
-      background: #00ff00;
-      font-family: Comic Sans MS, Arial, sans-serif;
+      margin: 0;
+      font-family: "Comic Sans MS", cursive;
+      background: repeating-linear-gradient(
+        45deg,
+        lime,
+        lime 20px,
+        yellow 20px,
+        yellow 40px,
+        red 40px,
+        red 60px
+      );
+      animation: bgPanic 0.25s infinite;
       text-align: center;
-      padding: 30px;
+      overflow-x: hidden;
+    }
+
+    @keyframes bgPanic {
+      0% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(180deg); }
+      100% { filter: hue-rotate(360deg); }
     }
 
     h1 {
-      font-size: 48px;
+      font-size: 70px;
       color: red;
-      text-shadow: 3px 3px black;
+      background: yellow;
+      border: 10px dotted blue;
+      text-shadow: 5px 5px black;
+      animation: wobble 0.4s infinite;
+      margin-bottom: 5px;
+    }
+
+    @keyframes wobble {
+      0% { transform: rotate(-2deg) scale(1); }
+      50% { transform: rotate(2deg) scale(1.05); }
+      100% { transform: rotate(-2deg) scale(1); }
+    }
+
+    marquee {
+      font-size: 28px;
+      background: black;
+      color: lime;
+      padding: 10px;
+      border-top: 5px solid red;
+      border-bottom: 5px solid red;
     }
 
     .box {
-      background: yellow;
-      border: 8px dashed red;
+      background: hotpink;
+      border: 12px ridge cyan;
+      max-width: 1000px;
+      margin: 25px auto;
       padding: 25px;
-      max-width: 900px;
-      margin: auto;
-      box-shadow: 15px 15px black;
+      box-shadow: 20px 20px 0 black;
+    }
+
+    .subtitle {
+      font-size: 30px;
+      background: white;
+      border: 5px dashed black;
+      padding: 10px;
+      margin-bottom: 20px;
     }
 
     button {
-      display: block;
-      width: 90%;
-      margin: 12px auto;
-      padding: 15px;
+      display: inline-block;
+      margin: 10px;
+      padding: 18px;
       font-size: 22px;
+      font-weight: bold;
       background: red;
       color: white;
-      border: 5px solid black;
+      border: 6px solid black;
       cursor: pointer;
+      box-shadow: 8px 8px 0 yellow;
+      transform: rotate(-1deg);
     }
 
     button:hover {
       background: black;
-      color: red;
+      color: lime;
+      transform: rotate(4deg) scale(1.1);
+    }
+
+    .panicButton {
+      font-size: 34px;
+      background: orange;
+      color: black;
+      animation: blink 0.3s infinite;
+      width: 80%;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
     }
 
     #output {
       margin-top: 25px;
       background: white;
-      border: 6px solid black;
+      border: 10px double black;
       padding: 25px;
-      font-size: 22px;
+      font-size: 23px;
       text-align: left;
-      min-height: 220px;
+      min-height: 260px;
+      box-shadow: 12px 12px 0 blue;
     }
 
     .panic {
-      font-size: 34px;
-      color: red;
-      font-weight: bold;
       text-align: center;
+      color: red;
+      font-size: 40px;
+      font-weight: bold;
+      animation: blink 0.5s infinite;
+    }
+
+    .terminal {
+      background: black;
+      color: lime;
+      padding: 15px;
+      font-family: monospace;
+      border: 5px solid lime;
+      margin-top: 20px;
+      white-space: pre-line;
+    }
+
+    .floating {
+      position: fixed;
+      font-size: 40px;
+      animation: float 4s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      from { transform: translateY(100vh) rotate(0deg); }
+      to { transform: translateY(-20vh) rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
+  <div class="floating" style="left: 5%;">🔥</div>
+  <div class="floating" style="left: 20%; animation-delay: 1s;">💀</div>
+  <div class="floating" style="left: 40%; animation-delay: 2s;">🚨</div>
+  <div class="floating" style="left: 60%; animation-delay: 1.5s;">🧯</div>
+  <div class="floating" style="left: 80%; animation-delay: 0.5s;">☠️</div>
+
+  <marquee scrollamount="18">
+    VARNING: DETTA VERKTYG ÄR FULT MEN FUNKAR - FRIDHEMFIGHTERS TAR INGET ANSVAR FÖR PANIK I PRODUKTION
+  </marquee>
+
   <div class="box">
     <h1>DevSecOops</h1>
-    <h2>FridhemFighters Incident Roulette</h2>
-    <p>Klicka på en incident och se hur organisationen tappar kontrollen.</p>
 
-    <button onclick="incident('env')">Någon pushade .env till GitHub</button>
-    <button onclick="incident('kubectl')">Någon körde kubectl delete all --all</button>
-    <button onclick="incident('postit')">Adminlösenordet sitter på en post-it</button>
-    <button onclick="incident('logs')">Ingen har aktiverat loggning</button>
-    <button onclick="incident('root')">Containern kör som root</button>
+    <div class="subtitle">
+      FridhemFighters Incident Roulette - byggt med stress, koffein och dåliga beslut
+    </div>
+
+    <button class="panicButton" onclick="randomIncident()">SLUMPA EN KATASTROF</button>
+
+    <br>
+
+    <button onclick="incident('env')">.env pushad till GitHub</button>
+    <button onclick="incident('kubectl')">kubectl delete all --all</button>
+    <button onclick="incident('postit')">Adminlösenord på post-it</button>
+    <button onclick="incident('logs')">Ingen loggning</button>
+    <button onclick="incident('root')">Container kör som root</button>
     <button onclick="incident('latest')">Alla images kör :latest</button>
-    <button onclick="incident('redis')">Redis ligger öppet mot internet</button>
+    <button onclick="incident('redis')">Redis öppet mot internet</button>
 
     <div id="output">
-      <div class="panic">Väntar på katastrof...</div>
+      <div class="panic">Väntar på att någon ska förstöra produktion...</div>
+      <div class="terminal">
+$ ./starta_kaos.sh
+[OK] Incident-simulator startad
+[WARN] Sunt förnuft saknas
+[INFO] Väntar på dåligt beslut...
+      </div>
     </div>
   </div>
 
   <script>
+    const blameList = [
+      "Personen som sa: 'jag ska bara testa snabbt'.",
+      "Den som körde kommandot utan att läsa det.",
+      "Stack Overflow från 2016.",
+      "Den som tyckte att dokumentation var överkurs.",
+      "Alla i teamet, men mest den som är tyst i mötet.",
+      "Den som sa: 'det funkade på min dator'."
+    ];
+
     const incidents = {
       env: {
-        title: "🚨 .env pushad till GitHub 🚨",
-        panic: "PANIKNIVÅ: 9000",
-        roast: "Det här är inte open source. Det är open secrets.",
+        title: "🚨 .env PUSHAD TILL GITHUB 🚨",
+        panic: "PANIKNIVÅ: OPEN SECRETS",
+        roast: "Det här är inte open source. Det är open sauce. Alla fick smaka.",
         action: "Rotera nycklarna direkt, ta bort filen, uppdatera .gitignore och kontrollera git history.",
-        blame: "Personen som sa: 'Jag ska bara pusha snabbt innan lunch.'",
-        lesson: "Kurskoppling: secrets management, Git hygiene och incident response."
+        lesson: "Secrets management, Git hygiene och incident response."
       },
       kubectl: {
-        title: "💀 kubectl delete all --all 💀",
-        panic: "PANIKNIVÅ: MOLNBASERAD ARBETSLÖSHET",
-        roast: "Grattis. Du har precis uppfunnit Kubernetes speedrun till tomt namespace.",
-        action: "Återställ från manifest eller Terraform, kontrollera namespace och använd RBAC.",
-        blame: "Personen som kör kommandon innan hjärnan har bootat.",
-        lesson: "Kurskoppling: IaC, RBAC, namespace och change control."
+        title: "💀 KUBECTL DELETE ALL --ALL 💀",
+        panic: "PANIKNIVÅ: TOMT NAMESPACE",
+        roast: "Grattis. Du har uppfunnit Kubernetes speedrun till arbetslöshet.",
+        action: "Återställ från manifest eller Terraform. Kontrollera namespace. Använd RBAC.",
+        lesson: "IaC, RBAC, namespaces och change control."
       },
       postit: {
-        title: "🟨 Adminlösenord på post-it 🟨",
+        title: "🟨 ADMINLÖSENORD PÅ POST-IT 🟨",
         panic: "PANIKNIVÅ: KONTORSMATERIAL",
         roast: "MFA? Nej tack. Vi har gul lapp under tangentbordet.",
-        action: "Byt lösenord, inför lösenordshanterare, MFA och personliga konton.",
-        blame: "Den som tycker att fysisk säkerhet är 'någon annans problem'.",
-        lesson: "Kurskoppling: identity, access management och Zero Trust."
+        action: "Byt lösenord, använd lösenordshanterare, MFA och personliga konton.",
+        lesson: "Identity, access management och Zero Trust."
       },
       logs: {
-        title: "🕳️ Ingen loggning 🕳️",
+        title: "🕳️ INGEN LOGGNING 🕳️",
         panic: "PANIKNIVÅ: VI VET INGENTING",
-        roast: "Incidenten gick jättebra. Vi vet bara inte vad som hände, när det hände eller vem som gjorde det.",
+        roast: "Incidenten gick jättebra. Vi vet bara inte vad som hände.",
         action: "Aktivera loggning, samla loggar centralt och skapa alerts.",
-        blame: "Personen som sa: 'Vi kollar loggarna sen.'",
-        lesson: "Kurskoppling: monitoring, detection och Wazuh."
+        lesson: "Monitoring, detection och Wazuh."
       },
       root: {
-        title: "👑 Container kör som root 👑",
+        title: "👑 CONTAINER KÖR SOM ROOT 👑",
         panic: "PANIKNIVÅ: ROOT MED SJÄLVFÖRTROENDE",
         roast: "Containern kör som root eftersom vi tydligen gillar äventyr.",
         action: "Kör som non-root, sätt securityContext och minimera privileges.",
-        blame: "Dockerfilen från Stack Overflow 2016.",
-        lesson: "Kurskoppling: container security och least privilege."
+        lesson: "Container security och least privilege."
       },
       latest: {
-        title: "🎲 Image taggad med :latest 🎲",
+        title: "🎲 IMAGE TAGGAD MED :LATEST 🎲",
         panic: "PANIKNIVÅ: PRODUKTIONSLOTTERI",
         roast: "Vi vet inte vad som körs, men det känns modernt.",
         action: "Använd versionspinnade images, SBOM och kontrollerad releaseprocess.",
-        blame: "Personen som gillar överraskningar i produktion.",
-        lesson: "Kurskoppling: supply chain security och reproducible deployments."
+        lesson: "Supply chain security och reproducible deployments."
       },
       redis: {
-        title: "🔥 Redis öppet mot internet 🔥",
+        title: "🔥 REDIS ÖPPET MOT INTERNET 🔥",
         panic: "PANIKNIVÅ: GRATIS DATA TILL ALLA",
         roast: "Redis behövde tydligen också ett socialt liv på internet.",
         action: "Stäng exponeringen, använd nätverkssegmentering, auth och firewall-regler.",
-        blame: "Den som trodde att 'temporärt öppet' betyder säkert.",
-        lesson: "Kurskoppling: segmentering, least exposure och defense in depth."
+        lesson: "Segmentering, least exposure och defense in depth."
       }
     };
 
+    function beep() {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = "square";
+      osc.frequency.value = 600;
+      gain.gain.value = 0.08;
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+
+      setTimeout(() => {
+        osc.frequency.value = 900;
+      }, 120);
+
+      setTimeout(() => {
+        osc.stop();
+      }, 300);
+    }
+
+    function speak(text) {
+      if ("speechSynthesis" in window) {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "sv-SE";
+        msg.rate = 1.1;
+        msg.pitch = 0.7;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(msg);
+      }
+    }
+
     function incident(type) {
       const i = incidents[type];
+      const blame = blameList[Math.floor(Math.random() * blameList.length)];
+
+      beep();
+      speak(i.title + ". " + i.panic);
 
       document.getElementById("output").innerHTML = `
         <div class="panic">${i.title}</div>
         <p><strong>${i.panic}</strong></p>
         <p><strong>Roast:</strong> ${i.roast}</p>
         <p><strong>Åtgärd:</strong> ${i.action}</p>
-        <p><strong>Vem skyller vi på?</strong> ${i.blame}</p>
+        <p><strong>Vem skyller vi på?</strong> ${blame}</p>
         <p><strong>Lärdom:</strong> ${i.lesson}</p>
+
+        <div class="terminal">
+$ tail -f /var/log/panik.log
+[CRITICAL] Någon gjorde något dumt
+[CRITICAL] Teamet låtsas vara lugnt
+[ERROR] Dokumentation saknas
+[WARN] Incident Commander googlar "how to undo production"
+[OK] FridhemFighters har åtminstone en demo
+        </div>
       `;
+    }
+
+    function randomIncident() {
+      const keys = Object.keys(incidents);
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
+      incident(randomKey);
     }
   </script>
 
