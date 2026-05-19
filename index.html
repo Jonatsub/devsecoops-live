@@ -22,7 +22,7 @@
       color: black;
       border: 12px dashed red;
       padding: 35px;
-      max-width: 750px;
+      max-width: 780px;
       text-align: center;
       box-shadow: 20px 20px 0 red;
     }
@@ -104,6 +104,21 @@
       color: white;
       border: 5px solid white;
       text-shadow: none;
+    }
+
+    #voiceToggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 5000;
+      background: black;
+      color: lime;
+      border: 5px solid lime;
+      padding: 12px 18px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 6px 6px 0 red;
     }
 
     h1 {
@@ -232,7 +247,7 @@
     <div class="warningBox">
       <h1>⚠️ WARNING ⚠️</h1>
 
-      <p>This site contains flashing colors and motion effects.</p>
+      <p>This site contains flashing colors, motion effects and optional text-to-speech.</p>
 
       <p>It may trigger seizures for people with photosensitive epilepsy.</p>
 
@@ -240,8 +255,14 @@
 
       <button onclick="enterChaos()">ENTER CHAOS MODE</button>
       <button onclick="enterSafeMode()">SAFE MODE - NO FLASHING</button>
+
+      <p style="font-size: 16px;">
+        Text-to-speech is OFF by default. You can turn it on inside the page.
+      </p>
     </div>
   </div>
+
+  <button id="voiceToggle" onclick="toggleVoice()">VOICE: OFF</button>
 
   <div class="floating" style="left: 5%;">🔥</div>
   <div class="floating" style="left: 20%; animation-delay: 1s;">💀</div>
@@ -284,6 +305,8 @@ $ ./starta_kaos.sh
   </div>
 
   <script>
+    let voiceEnabled = false;
+
     function enterChaos() {
       document.getElementById("warningScreen").style.display = "none";
     }
@@ -293,13 +316,67 @@ $ ./starta_kaos.sh
       document.getElementById("warningScreen").style.display = "none";
     }
 
+    function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+
+      const button = document.getElementById("voiceToggle");
+
+      if (voiceEnabled) {
+        button.textContent = "VOICE: ON";
+        button.style.color = "black";
+        button.style.background = "lime";
+        button.style.borderColor = "black";
+        speak("Text to speech är aktiverat. Jag kommer nu verbalt döma era säkerhetsbeslut.");
+      } else {
+        button.textContent = "VOICE: OFF";
+        button.style.color = "lime";
+        button.style.background = "black";
+        button.style.borderColor = "lime";
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function getSwedishVoice() {
+      const voices = window.speechSynthesis.getVoices();
+      return voices.find(v => v.lang === "sv-SE") ||
+             voices.find(v => v.lang && v.lang.startsWith("sv")) ||
+             null;
+    }
+
+    function speak(text) {
+      if (!voiceEnabled) return;
+      if (!("speechSynthesis" in window)) return;
+
+      window.speechSynthesis.cancel();
+
+      const msg = new SpeechSynthesisUtterance(text);
+      const svVoice = getSwedishVoice();
+
+      if (svVoice) {
+        msg.voice = svVoice;
+      }
+
+      msg.lang = "sv-SE";
+      msg.rate = 1.05;
+      msg.pitch = 0.75;
+      msg.volume = 1;
+
+      window.speechSynthesis.speak(msg);
+    }
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = function() {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
     const blameList = [
-      "Personen som sa: 'jag ska bara testa snabbt'.",
+      "Personen som sa: jag ska bara testa snabbt.",
       "Den som körde kommandot utan att läsa det.",
       "Stack Overflow från 2016.",
       "Den som tyckte att dokumentation var överkurs.",
       "Alla i teamet, men mest den som är tyst i mötet.",
-      "Den som sa: 'det funkade på min dator'."
+      "Den som sa: det funkade på min dator."
     ];
 
     const incidents = {
@@ -308,55 +385,64 @@ $ ./starta_kaos.sh
         panic: "PANIKNIVÅ: OPEN SECRETS",
         roast: "Det här är inte open source. Det är open sauce. Alla fick smaka.",
         action: "Rotera nycklarna direkt, ta bort filen, uppdatera .gitignore och kontrollera git history.",
-        lesson: "Secrets management, Git hygiene och incident response."
+        lesson: "Secrets management, Git hygiene och incident response.",
+        voice: "Varning. Någon har pushat punkt env till GitHub. Paniknivå open secrets. Det här är inte open source. Det är open sauce. Rotera nycklarna, ta bort filen, uppdatera gitignore och kontrollera historiken."
       },
       kubectl: {
         title: "💀 KUBECTL DELETE ALL --ALL 💀",
         panic: "PANIKNIVÅ: TOMT NAMESPACE",
         roast: "Grattis. Du har uppfunnit Kubernetes speedrun till arbetslöshet.",
         action: "Återställ från manifest eller Terraform. Kontrollera namespace. Använd RBAC.",
-        lesson: "IaC, RBAC, namespaces och change control."
+        lesson: "IaC, RBAC, namespaces och change control.",
+        voice: "Katastrof. Någon körde kubectl delete all all. Grattis. Du har uppfunnit Kubernetes speedrun till tomt namespace. Återställ från manifest eller Terraform och använd RBAC."
       },
       postit: {
         title: "🟨 ADMINLÖSENORD PÅ POST-IT 🟨",
         panic: "PANIKNIVÅ: KONTORSMATERIAL",
         roast: "MFA? Nej tack. Vi har gul lapp under tangentbordet.",
         action: "Byt lösenord, använd lösenordshanterare, MFA och personliga konton.",
-        lesson: "Identity, access management och Zero Trust."
+        lesson: "Identity, access management och Zero Trust.",
+        voice: "Larm. Adminlösenordet sitter på en post it. MFA? Nej tack. Vi har gul lapp under tangentbordet. Byt lösenord och använd lösenordshanterare."
       },
       logs: {
         title: "🕳️ INGEN LOGGNING 🕳️",
         panic: "PANIKNIVÅ: VI VET INGENTING",
         roast: "Incidenten gick jättebra. Vi vet bara inte vad som hände.",
         action: "Aktivera loggning, samla loggar centralt och skapa alerts.",
-        lesson: "Monitoring, detection och Wazuh."
+        lesson: "Monitoring, detection och Wazuh.",
+        voice: "Varning. Ingen loggning är aktiverad. Incidenten gick jättebra. Vi vet bara inte vad som hände, när det hände eller vem som gjorde det."
       },
       root: {
         title: "👑 CONTAINER KÖR SOM ROOT 👑",
         panic: "PANIKNIVÅ: ROOT MED SJÄLVFÖRTROENDE",
         roast: "Containern kör som root eftersom vi tydligen gillar äventyr.",
         action: "Kör som non-root, sätt securityContext och minimera privileges.",
-        lesson: "Container security och least privilege."
+        lesson: "Container security och least privilege.",
+        voice: "Varning. Containern kör som root. Den har mer självförtroende än teamet. Kör som non root och minimera privileges."
       },
       latest: {
         title: "🎲 IMAGE TAGGAD MED :LATEST 🎲",
         panic: "PANIKNIVÅ: PRODUKTIONSLOTTERI",
         roast: "Vi vet inte vad som körs, men det känns modernt.",
         action: "Använd versionspinnade images, SBOM och kontrollerad releaseprocess.",
-        lesson: "Supply chain security och reproducible deployments."
+        lesson: "Supply chain security och reproducible deployments.",
+        voice: "Varning. Alla images kör latest. Vi vet inte vad som körs, men det känns modernt. Använd versionspinnade images och kontrollerad releaseprocess."
       },
       redis: {
         title: "🔥 REDIS ÖPPET MOT INTERNET 🔥",
         panic: "PANIKNIVÅ: GRATIS DATA TILL ALLA",
         roast: "Redis behövde tydligen också ett socialt liv på internet.",
         action: "Stäng exponeringen, använd nätverkssegmentering, auth och firewall-regler.",
-        lesson: "Segmentering, least exposure och defense in depth."
+        lesson: "Segmentering, least exposure och defense in depth.",
+        voice: "Katastrof. Redis ligger öppet mot internet. Redis behövde tydligen också ett socialt liv. Stäng exponeringen och använd nätverkssegmentering."
       }
     };
 
     function incident(type) {
       const i = incidents[type];
       const blame = blameList[Math.floor(Math.random() * blameList.length)];
+
+      speak(i.voice + " Vem skyller vi på? " + blame);
 
       document.getElementById("output").innerHTML = `
         <div class="panic">${i.title}</div>
